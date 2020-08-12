@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>打灰太狼</title>
+	</head>
+	<style type="text/css">
+		#bg {
+			width: 320px;
+			height: 480px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+			background: url(img/game_bg.jpg);
+			cursor: url(img/222.cur),auto;
+		}
+		div {
+			position: absolute;
+		}
+		#score {
+			top: 10px;
+			left: 60px;
+			font: normal normal 20px '微软雅黑';
+			color: white;
+		}
+		#time {
+			width: 180px;
+			height: 16px;
+			background: url(img/progress.png);
+			top: 66px;
+			left: 63px;
+		}
+		#end {
+			width: 200px;
+			height: 60px;
+			background-color: pink;
+			text-align: center;
+			font: normal normal 30px '微软雅黑';
+			line-height: 60px;
+			top: 200px;
+			left: 60px;
+			display: none;
+		}
+		#start {
+			width: 80px;
+			height: 80px;
+			/*background-image: url(img/bg.jpg);*/
+			background-size: 100% 100%;
+			line-height: 80px;
+			text-align: center;
+			font-size: 24px;
+			color: orangered;
+			position: absolute;
+			left: 120px;
+			top: 320px;
+		}
+	</style>
+	<script>
+		onload = function () {
+			var btn = document.getElementById('btn');
+			var btna = document.getElementById('btna');
+			var btnb = document.getElementById('btnb');
+			var btnc = document.getElementById('btnc');
+			var time = document.getElementById('time');
+			var bg = document.getElementById('bg');
+			var end = document.getElementById('end');
+			var score = document.getElementById('score');
+			//offsetWidth属性获取time的宽度,并进行操作
+			var timeWidth = time.offsetWidth;
+			//点击事件,进度条开始
+			var langup,wakk,langdown,timeinterval;
+			var weizhi;
+			var flag = true;
+			//重新开始
+			btn.onclick = function () {
+				clearInterval(wakk);
+				timeWidth = 180;
+				end.style.display = 'none';
+				score.innerText = '0';
+				//利用定时器设置进度条效果
+				timeinterval = setInterval (function () {
+					timeWidth--;
+					time.style.width = timeWidth + 'px';
+					if (timeWidth <= 0) {
+						clearInterval(wakk);
+						end.innerText = "得分："+score.innerText;
+						end.style.display = 'block';
+					}
+				},100);
+				//定时添加狼
+				wakk = setInterval (function () {
+					aa();	//添加狼的函数
+				},1000);
+			}
+			//游戏开始
+			btna.onclick = function () {
+				clearInterval(wakk);
+				end.style.display = 'none';
+				//利用定时器设置进度条效果
+				timeinterval = setInterval (function () {
+					timeWidth--;
+					time.style.width = timeWidth + 'px';
+					if (timeWidth <= 0) {
+						clearInterval(wakk);
+						end.innerText = "得分："+score.innerText;
+						end.style.display = 'block';
+					}
+				},100);
+				//定时添加狼
+				wakk = setInterval (function () {
+					aa();	//添加狼的函数
+				},1000);
+			}
+			//游戏结束
+			btnb.onclick = function () {
+				clearInterval(wakk);
+				clearInterval(timeinterval);
+				end.innerText = "得分："+score.innerText;
+				end.style.display = 'block';
+			}
+			//游戏暂停
+			btnc.onclick = function () {
+				
+				if(flag) {
+					clearInterval(wakk);
+					clearInterval(timeinterval);
+				} else {
+					clearInterval(wakk);
+					clearInterval(timeinterval);
+					timeinterval = setInterval (function () {
+						timeWidth--;
+						time.style.width = timeWidth + 'px';
+						if (timeWidth <= 0) {
+							clearInterval(wakk);
+							end.innerText = "得分："+score.innerText;
+							end.style.display = 'block';
+						}
+					},100);
+					wakk = setInterval (function () {
+						aa();	//添加狼的函数
+					},1000);
+				}
+				flag = !flag;
+			}
+			
+		var aa = function () {
+			//动态创建img元素
+			var lang = document.createElement('img');
+			var i = 0;
+			//把img加入到页面中的背景中
+			bg.appendChild(lang);
+			lang.style.position = 'absolute';
+			//利用随机函数和kengList.length获取随机值
+			var num = Math.floor(Math.random()*kengList.length);
+			//设置狼的定位属性
+			lang.style.left = kengList[num].left;
+			lang.style.top = kengList[num].top;
+			//判断位置否重叠,如果位置重叠,终结本次执行
+			if(kengList[num].left == weizhi) {
+				return ;
+			}
+			weizhi = kengList[num].left;
+			lang.onclick = function () {
+				lang.src = 'img/h6.png';
+				score.innerText =  parseInt(score.innerText) + 10;
+			}
+			//利用定时器实现狼动的效果
+			langup = setInterval (function () {
+				i++;
+				if (i >= 5) {
+					clearInterval(langup);
+				}
+				lang.src = 'img/h'+ i +'.png';
+			},100);
+			
+			//定时器设置2秒后，狼下降
+			var langdo = setTimeout(function () {
+				langdown = setInterval (function () {
+					i--;
+					lang.src = 'img/h'+ i +'.png';
+					
+					if (i <= 0) {
+						clearInterval(langdown);
+						bg.removeChild(lang);
+					}
+				},100);
+			},2000);
+		}
+		//设置数组，数组中加入狼应该出现的位置值	
+		var kengList = [
+		{
+			left:'98px',
+			top: '114px'
+		},
+		{
+			left:'17px',
+			top: '160px'
+		},
+		{
+			left:'15px',
+			top: '221px'
+		},
+		{
+			left:'30px',
+			top: '294px'
+		},
+		{
+			left:'122px',
+			top: '274px'
+		},
+		{
+			left:'207px',
+			top: '296px'
+		},
+		{
+			left:'200px',
+			top: '212px'
+		},
+		{
+			left:'187px',
+			top: '142px'
+		},
+		{
+			left:'100px',
+			top: '192px'
+		}
+	]
+	
+			
+		}
+	</script>
+	<body>
+		<div id="bg">
+			<div id="score">0</div>
+			<div id="time"></div>
+			<div id="end"></div>
+			<div id="start"></div>
+			<div></div>
+			
+		</div>
+		<input type="button" value="重新开始" id="btn">
+		<input type="button" value="开始游戏" id="btna">
+		<input type="button" value="结束" id="btnb">
+		<input type="button" value="暂停" id="btnc">
+	</body>
+</html>
